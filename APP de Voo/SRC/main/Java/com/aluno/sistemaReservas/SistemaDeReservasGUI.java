@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,6 +99,31 @@ public class SistemaDeReservasGUI {
             }
         });
 
+        JButton botaoListarPassageiros = new JButton("Listar Passageiros");
+        botaoListarPassageiros.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String numeroVoo = campoNumeroVoo.getText();
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter("passageiros.txt"))) {
+                    for (Reserva reserva : sistema.getReservas()) {
+                        if (reserva.getVoo().getNumeroVoo().equalsIgnoreCase(numeroVoo)) {
+                            writer.write("Voo: " + reserva.getVoo().getNumeroVoo() +
+                                    ", Origem: " + reserva.getVoo().getOrigem() +
+                                    ", Destino: " + reserva.getVoo().getDestino() +
+                                    ", Companhia: " + reserva.getVoo().getCompanhiaAerea() +
+                                    ", Passageiro: " + reserva.getPassageiro().getNome() +
+                                    ", Passaporte: " + reserva.getPassageiro().getNumeroPassaporte() +
+                                    ", Assento: " + reserva.getNumeroAssento());
+                            writer.newLine();
+                        }
+                    }
+                    JOptionPane.showMessageDialog(frame, "Passageiros listados e salvos em passageiros.txt com sucesso!");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(frame, "Erro ao salvar a lista de passageiros.");
+                }
+            }
+        });
+
         panel.add(labelOrigem);
         panel.add(campoOrigem);
         panel.add(labelDestino);
@@ -114,6 +142,7 @@ public class SistemaDeReservasGUI {
         panel.add(campoNumeroAssento);
         panel.add(botaoReservar);
         panel.add(botaoCancelar);
+        panel.add(botaoListarPassageiros);
 
         frame.add(panel);
         frame.setVisible(true);
